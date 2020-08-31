@@ -24,6 +24,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.lang.reflect.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class GreenhouseControls extends Controller implements Serializable, Runnable {
@@ -36,59 +37,67 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
   private String eventsFile = "examples1.txt";
   private int errorcode;
 
+  // TODO: make a constructor for GreenhouseController
+
+  public Controller c = new Controller();
+
+  public Controller getC() {
+    return c;
+  }
+
   // Collection of TwoTuple to store state variables
   class TwoTuple<A,B> {
-    public final A first;
-    public final B second;
+    public A first;
+    public B second;
     public TwoTuple(A a, B b) { first = a; second = b; }
     public String toString() {
       return "(" + first + ", " + second + ")";
     }
   }
 
-  // Takes the
-  public class SetVariable{
+  // List of TwoTuples storing variables
+  List<TwoTuple> variables = new ArrayList<>();
+
+
+  // Synchornized lock to prevent multiple events from accessing TwoTuple at the same time
+
+  ReentrantLock lock = new ReentrantLock();
 
 
 
-  }
+  public void setVariable(TwoTuple toSet){
 
+    lock.lock(); // locks for synchonirzation
 
-  // Provide the means to create event classes from their names
-  public void getEvent () {
-
-    Class outer = EventClasses.class; // fetches outer class
-    Class inner = null;
-    Constructor con = null;
-
-    try {   // finds the inner class that we're looking to create
-      inner = Class.forName("tme3.EventClasses$" + "LightOn");
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-
+    // lock requires try/catch (?)
     try {
-      con = inner.getConstructor();
-    } catch (NoSuchMethodException e) {
+      boolean found = false;  // checks if the variable is already stored in the TwoTuple, as we don't want multiple LightOns
+
+      for (TwoTuple t: variables) //for loop that goes through every TwoTuple inside variables
+              {
+                if (t.first == toSet.first){
+                  t.second = toSet.second;
+                  found = true;
+                  break;
+                }
+        }
+
+      if (!found){
+        variables.add(toSet); //adds to the TwoTuple
+      }
+
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
-    // Now, make the event
-    EventClasses ec = new EventClasses(1000);
 
-    Object event = null;
+    lock.unlock(); // unlocks when finished
 
-    try {
-      event = con.newInstance(ec, 1000);
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
     }
 
-  }
+
+
+
 
 
   @Override

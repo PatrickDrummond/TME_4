@@ -2,6 +2,8 @@ package tme3;
 
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
@@ -201,6 +203,44 @@ public class EventClasses extends Event {
         public String toString() { return "Terminating";  }
     }
 
+    // Provide the means to create event classes from their names
+    public Object getEvent (String name, long time) {
+
+        Class outer = EventClasses.class; // fetches outer class
+        Class inner = null;
+        Constructor con = null;
+
+        try {   // finds the inner class that we're looking to create
+            inner = Class.forName("tme3.EventClasses$" + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            con = inner.getConstructor();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        // Now, make the event
+        EventClasses ec = new EventClasses(time);
+
+        Object event = null;
+
+        try {
+            event = con.newInstance(ec, time);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return event;
+
+    }
+
     public class Restart extends Event {
         public Restart(long delayTime, String filename) {
             super(delayTime);
@@ -231,59 +271,18 @@ public class EventClasses extends Event {
                 String eventTime = eventsArray[1].split("=")[1];
                 //System.out.println("Name" + eventName);
                 //System.out.println("Time" + eventTime);
-                int etime = Integer.parseInt(eventTime);
+                Long etime = Long.parseLong(eventTime);
 
                 // call getEvent() to get events to add to eventList array
+                Event e = new Event(0);
 
-                switch(eventName)
-                {
-                    case "LightOn":
-                        addEvent(new LightOn(etime));
-                        break;
-                    case "LightOff":
-                        addEvent(new LightOff(etime));
-                        break;
-                    case "WaterOn":
-                        addEvent(new WaterOn(etime));
-                        break;
-                    case "WaterOff":
-                        addEvent(new WaterOff(etime));
-                        break;
-                    case "ThermostatDay":
-                        addEvent(new ThermostatDay(etime));
-                        break;
-                    case "ThermostatNight":
-                        addEvent(new ThermostatNight(etime));
-                        break;
-                    case "FansOn":
-                        addEvent(new FansOn(etime));
-                        break;
-                    case "FansOff":
-                        addEvent(new FansOff(etime));
-                        break;
-                    case "Terminate":
-                        addEvent(new GreenhouseControls.Terminate(etime));
-                        break;
-                    case "WindowMalfunction":
-                        addEvent(new WindowMalfunction(etime));
-                        break;
-                    case "PowerOut":
-                        addEvent(new PowerOut(etime));
-                        break;
-                    case "Bell":
-                        // Bell specifies Rings
-                        if (eventsArray.length == 3){
-                            int rings = Integer.parseInt(eventsArray[2].split("=")[1]);
-                            for (int i = 0; i< rings; i++){
-                                addEvent(new Bell(etime + 2000 * i));
-                            }
-                        }
-                        else {
-                            addEvent(new Bell(etime));
-                        }
+                e = (Event) getEvent(eventName, etime);
 
 
-                }
+                c.addEvent(e);
+
+
+
 
             }
             myReader.close();
