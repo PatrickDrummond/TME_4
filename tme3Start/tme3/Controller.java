@@ -21,9 +21,14 @@ import java.util.*;
 public class Controller {
   // A class from java.util to hold Event objects:
   public List<Event> eventList = new ArrayList<Event>();
+  private GreenhouseControls gc;
   public void addEvent(Event c) { eventList.add(c); }
   public void shutdown(){
     System.out.println("Controller Shutdown");
+  }
+
+  Controller(GreenhouseControls gc){
+    this.gc = gc;
   }
 
   public void run() {

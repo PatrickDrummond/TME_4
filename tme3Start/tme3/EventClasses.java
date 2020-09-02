@@ -7,31 +7,44 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
-public class EventClasses extends Event {
+public class EventClasses  {
+    //    private boolean light = false;
+//    private boolean water = false;
+//    private boolean fans = false;
+//    private boolean windowok = true;
+//    private boolean poweron = true;
+//    private String thermostat = "Day";
+//    private String eventsFile = "examples1.txt";
+//    private int errorcode;
 
-    private boolean light = false;
-    private boolean water = false;
-    private boolean fans = false;
-    private boolean windowok = true;
-    private boolean poweron = true;
-    private String thermostat = "Day";
-    private String eventsFile = "examples1.txt";
-    private int errorcode;
-
-
+    private long eventTime;
+    protected final long delayTime;
     public EventClasses(long delayTime) {
-        super(delayTime);
+        this.delayTime = delayTime;
+        this.start();
     }
 
-    public class LightOn extends Event {
+    public void start(){
+        eventTime = System.currentTimeMillis() + delayTime;
+    }
+
+    public boolean ready(){
+        return System.currentTimeMillis() >= eventTime;
+    }
+
+
+    public class LightOn extends EventClasses implements Event  {
+
         public LightOn(long delayTime) {
             super(delayTime);
         }
 
-        public void action() {
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here to
             // physically turn on the light.
-            light = true;
+            // light = true;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", true);
+            gc.setVariable(tt);
         }
 
         public String toString() {
@@ -39,11 +52,15 @@ public class EventClasses extends Event {
         }
 
         @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
+        }
+
+        @Override
         public void run() {
             action();
             System.out.println("From  LightON run() " + Thread.currentThread().getName());
         }
-
     }
 
 
@@ -204,7 +221,7 @@ public class EventClasses extends Event {
     }
 
     // Provide the means to create event classes from their names
-    public Object getEvent (String name, long time) {
+    public Event getEvent (String name, long time) {
 
         Class outer = EventClasses.class; // fetches outer class
         Class inner = null;
@@ -237,11 +254,11 @@ public class EventClasses extends Event {
             e.printStackTrace();
         }
 
-        return event;
+        return (Event) event;
 
     }
 
-    public class Restart extends Event {
+    public class Restart extends EventClasses implements Event {
         public Restart(long delayTime, String filename) {
             super(delayTime);
             eventsFile = filename;
@@ -274,9 +291,10 @@ public class EventClasses extends Event {
                 Long etime = Long.parseLong(eventTime);
 
                 // call getEvent() to get events to add to eventList array
-                Event e = new Event(0);
+                Event e;
 
-                e = (Event) getEvent(eventName, etime);
+                e = getEvent(eventName, etime);
+
 
 
                 c.addEvent(e);
