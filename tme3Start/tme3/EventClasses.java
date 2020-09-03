@@ -333,11 +333,12 @@ public class EventClasses  {
 
     public class Restart extends EventClasses implements Event {
 
+        String eventsFile;
+
         public Restart(long delayTime, String filename, GreenhouseControls gc) {
             super(delayTime, gc);
-            String eventsFile = filename;   //setting up eventsFile
+            eventsFile = filename;
         }
-
 
         public void action(GreenhouseControls gc) { // action() can only take GreenhouseControls as parameter
             //System.out.println("You're inside Restart.action");
@@ -390,8 +391,5 @@ public class EventClasses  {
             return "Restarting system";
         }
     }
-
-
-
 
 }

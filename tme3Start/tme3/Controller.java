@@ -37,7 +37,7 @@ public class Controller {
     while (eventList.size() > 0)
       // Make a copy so you're not modifying the list
       // while you're selecting the elements in it:
-      try {
+
         for (Event e : new ArrayList<Event>(eventList)) {
           if (e.ready()) {
             System.out.println(e);
@@ -47,10 +47,11 @@ public class Controller {
             eventList.remove(e);
           }
         }
-      } catch (ControllerException | IOException e) {
+
+
         shutdown();
         System.exit(1);
-      }
+
   }
 
 

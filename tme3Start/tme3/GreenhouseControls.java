@@ -24,23 +24,22 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class GreenhouseControls extends Controller implements Serializable, Runnable {
-  private boolean light = false;
-  private boolean water = false;
-  private boolean fans = false;
-  private boolean windowok = true;
-  private boolean poweron = true;
-  private String thermostat = "Day";
-  private String eventsFile = "examples1.txt";
-  private int errorcode;
+public class GreenhouseControls implements Serializable {
 
-  // TODO: make a constructor for GreenhouseController
+//  private boolean light = false;
+//  private boolean water = false;
+//  private boolean fans = false;
+//  private boolean windowok = true;
+//  private boolean poweron = true;
+//  private String thermostat = "Day";
+private String eventsFile = "examples1.txt";
+private int errorcode;
 
-  GreenhouseControls(){
+  public GreenhouseControls() {
 
   }
 
-  public Controller c = new Controller();
+  public Controller c = new Controller(this);
 
 
 
@@ -95,7 +94,7 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
 
 
-  @Override
+
   public void shutdown() {
 
     if (errorcode == 1) {
@@ -146,7 +145,9 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
   public class PowerOn implements Fixable {
     public void fix() {
-      poweron = true; // turns power on
+      //poweron = true; // turns power on
+      TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", true);
+      setVariable(tt);
       errorcode = 0; //clears error code
     }
 
@@ -163,7 +164,9 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
   public class FixWindow implements Fixable {
     public void fix() {
-      windowok = true; // fixes window problem
+     // windowok = true; // fixes window problem
+      TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", true);
+      setVariable(tt);
       errorcode = 0; //clears error code
     }
 
@@ -194,6 +197,7 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
     GreenhouseControls gc1;
 
+
      void deserialize(){  // Deserializes based on Serializeable interface
 
       try {
@@ -214,13 +218,16 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
 
     void systemStatus(){  // Prints the status of every variable that was deserialized from dump.out
-      System.out.println("Light Status: " + gc1.light);
-      System.out.println("Water Status: " + gc1.water);
-      System.out.println("Fans Status: " + gc1.fans);
-      System.out.println("Thermostat Status: " + gc1.thermostat);
-      System.out.println("Power Status: " + gc1.poweron);
-      System.out.println("Window Status: " + gc1.windowok);
-      System.out.println("Errorcode: " + gc1.errorcode);
+
+      //TODO: change this method for TwoTuple
+//
+//      System.out.println("Light Status: " + gc1.light);
+//      System.out.println("Water Status: " + gc1.water);
+//      System.out.println("Fans Status: " + gc1.fans);
+//      System.out.println("Thermostat Status: " + gc1.thermostat);
+//      System.out.println("Power Status: " + gc1.poweron);
+//      System.out.println("Window Status: " + gc1.windowok);
+//      System.out.println("Errorcode: " + gc1.errorcode);
     }
 
     void repairSystem(){
@@ -228,50 +235,48 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
     }
 
     void restoreEvents(){
-      Restart r = gc1.new Restart(0, gc1.eventsFile); // new events file for gc1
-      r.action(); // adds events to gc1
+
+      EventClasses ec = new EventClasses(0, gc1);
+      EventClasses.Restart r = ec.new Restart(0, gc1.eventsFile, gc1); // new events file for gc1
+      r.action(gc1); // adds events to gc1
       // System.out.println("gc1 event list size: " + gc1.eventList.size());  // checks if events were inserted correctly
     }
 
     void systemContinue(){
     //System.out.println(gc1.eventsFile); // checks for proper event file
-      gc1.run(); // runs the events that were added to gc1.eventsFile
+      gc1.c.run(); // runs the events that were added to gc1.eventsFile
     }
 
 
     // the gc1 deserialized object is only supposed to run from after the malfunction
     // this method checks for where the malfunction was, and only adds events from after that
     public void cutOldEvents(){
+
+       EventClasses ec = new EventClasses(0, gc1);
+
       List<Event> restoreList = new ArrayList<>();
       Boolean restore = false;
 
 
-      for (int i = 0; i < gc1.eventList.size(); i++){
-        if (gc1.eventList.get(i) instanceof WindowMalfunction || gc1.eventList.get(i) instanceof PowerOut){
+      // interates through controller eventList looking for malfunction events
+      for (int i = 0; i < gc1.c.eventList.size(); i++){
+        if (gc1.c.eventList.get(i) instanceof EventClasses.WindowMalfunction || gc1.c.eventList.get(i) instanceof EventClasses.PowerOut){
           restore = true;
          // System.out.println("Before Continue");
           continue;
         }
         if(restore){
-          restoreList.add(gc1.eventList.get(i));
+          restoreList.add(gc1.c.eventList.get(i));
         }
       }
-      gc1.eventList.clear();
-      gc1.eventList.addAll(restoreList);
+      gc1.c.eventList.clear();
+      gc1.c.eventList.addAll(restoreList);
      // System.out.println("REstore list size " + restoreList.size());
     }
 
 
   }
 
-
-
-
-  public class Terminate extends Event {
-    public Terminate(long delayTime) { super(delayTime); }
-    public void action() { System.exit(0); }
-    public String toString() { return "Terminating";  }
-  }
 
 
   public static void printUsage() {
@@ -291,34 +296,21 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 		printUsage();
 	    }
 
+
 	    GreenhouseControls gc = new GreenhouseControls();
+        EventClasses ec = new EventClasses(0, gc);
 
 	    if (option.equals("-f"))  {
-		gc.addEvent(gc.new Restart(0,filename));
+		gc.c.addEvent(ec.new Restart(0,filename, gc));
 	    }
 
-	    gc.run();
-
-        EventClasses e1 = new EventClasses(1000);
-
-      System.out.println("Eventlist Size: " + gc.eventList.size());
+	   // gc.run();
 
 
 
-	    Thread t1 = new Thread(e1) {
-          public void run() {
-            e1.new LightOn(1000).run();
-            System.out.println(gc.light);
-            e1.new LightOff(1000).run();
-            System.out.println(gc.light);
-            System.out.println("Running From t1");
-
-          }
-        };
+      // System.out.println("Eventlist Size: " + gc.eventList.size());
 
 
-
-	    t1.start();
 
 
 
