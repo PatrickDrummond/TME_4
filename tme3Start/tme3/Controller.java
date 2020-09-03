@@ -41,16 +41,21 @@ public class Controller {
         for (Event e : new ArrayList<Event>(eventList)) {
           if (e.ready()) {
             System.out.println(e);
-            //e.action();
-            Thread t1 = new Thread(e); // make new thread and pass a runnable into the thread
-            t1.start(); // start the thread
+            try{
+              e.action(gc);
+            } catch (Exception | ControllerException z){
+
+            }
+
+            //Thread t1 = new Thread(e); // make new thread and pass a runnable into the thread
+            //t1.start(); // start the thread
             eventList.remove(e);
           }
         }
 
 
-        shutdown();
-        System.exit(1);
+        //shutdown();
+        //System.exit(1);
 
   }
 

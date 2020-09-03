@@ -306,8 +306,10 @@ public class EventClasses  {
             e.printStackTrace();
         }
 
+        Constructor[] cons = inner.getConstructors();
+
         try {
-            con = inner.getConstructor();
+            con = inner.getConstructor(EventClasses.class, Long.TYPE, GreenhouseControls.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -318,7 +320,7 @@ public class EventClasses  {
         Object event = null;
 
         try {
-            event = con.newInstance(ec, time);
+            event = con.newInstance(ec, time, gc);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -344,7 +346,20 @@ public class EventClasses  {
             //System.out.println("You're inside Restart.action");
 
             // Make a new file class with input file specified in command line
+
+            int x = 1;
+
+            //File myFile = null;
+
             File myFile = new File(eventsFile);
+
+//            try {
+//                myFile = new File(eventsFile);
+//            } catch(Exception e){
+//                e.printStackTrace();
+//            }
+
+
 
             // Remind user what file they input
             // System.out.println("File name: " + myFile.getName());
@@ -373,7 +388,7 @@ public class EventClasses  {
 
 
                 // adding event to controller
-                gc.addEvent(e);
+                gc.c.addEvent(e);
 
 
 

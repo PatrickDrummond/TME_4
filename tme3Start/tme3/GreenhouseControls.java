@@ -288,8 +288,12 @@ private int errorcode;
 //---------------------------------------------------------
     public static void main(String[] args) {
 	try {
-	    String option = args[0];
-	    String filename = args[1];
+
+	    //String option = args[0];
+	    //String filename = args[1];
+
+      String option = "-f";
+      String filename = "C:\\Users\\Frank\\IdeaProjects\\TME_4\\tme3Start\\examples1.txt";
 
 	    if ( !(option.equals("-f")) && !(option.equals("-d")) ) {
 		System.out.println("Invalid option");
@@ -304,7 +308,7 @@ private int errorcode;
 		gc.c.addEvent(ec.new Restart(0,filename, gc));
 	    }
 
-	   // gc.run();
+	   gc.c.run();
 
 
 
