@@ -35,7 +35,7 @@ public interface Event extends Runnable {
   public boolean ready();
   //  return System.currentTimeMillis() >= eventTime;
 
-  public void action(GreenhouseControls gc);// throws ControllerException, IOException, ControllerException{};
+  public void action(GreenhouseControls gc) throws ControllerException, IOException;
 
 
   public void run();

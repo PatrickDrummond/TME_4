@@ -21,6 +21,8 @@ import java.util.*;
 public class Controller {
   // A class from java.util to hold Event objects:
   public List<Event> eventList = new ArrayList<Event>();
+  // list of threads
+  public List<Thread> threadList = new ArrayList<>();
   private GreenhouseControls gc;
   public void addEvent(Event c) { eventList.add(c); }
   public void shutdown(){
@@ -39,7 +41,9 @@ public class Controller {
         for (Event e : new ArrayList<Event>(eventList)) {
           if (e.ready()) {
             System.out.println(e);
-            e.action();
+            //e.action();
+            Thread t1 = new Thread(e); // make new thread and pass a runnable into the thread
+            t1.start(); // start the thread
             eventList.remove(e);
           }
         }

@@ -15,13 +15,16 @@ public class EventClasses  {
 //    private boolean poweron = true;
 //    private String thermostat = "Day";
 //    private String eventsFile = "examples1.txt";
-//    private int errorcode;
+    private int errorcode;
 
     private long eventTime;
     protected final long delayTime;
-    public EventClasses(long delayTime) {
+    GreenhouseControls gc;
+
+    public EventClasses(long delayTime, GreenhouseControls gc) {
         this.delayTime = delayTime;
         this.start();
+        this.gc = gc;
     }
 
     public void start(){
@@ -35,8 +38,8 @@ public class EventClasses  {
 
     public class LightOn extends EventClasses implements Event  {
 
-        public LightOn(long delayTime) {
-            super(delayTime);
+        public LightOn(long delayTime, GreenhouseControls gc) {
+            super(delayTime, gc);
         }
 
         public void action(GreenhouseControls gc) {
@@ -58,132 +61,197 @@ public class EventClasses  {
 
         @Override
         public void run() {
-            action();
+            action(this.gc);
             System.out.println("From  LightON run() " + Thread.currentThread().getName());
         }
     }
 
 
-    public class LightOff extends Event {
-        public LightOff(long delayTime) { super(delayTime); }
-        public void action() {
+    public class LightOff extends EventClasses implements Event {
+        public LightOff(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here to
             // physically turn off the light.
-            light = false;
+            // light = false;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", false);
+            gc.setVariable(tt);
         }
         public String toString() { return "Light is off"; }
 
+
+
         @Override
         public void run() {
-            action();
+            action(this.gc);
             System.out.println("From  LightOFF run() " + Thread.currentThread().getName());
         }
     }
-    public class WaterOn extends Event {
-        public WaterOn(long delayTime) { super(delayTime); }
-        public void action() {
+
+    public class WaterOn extends EventClasses implements Event {
+        public WaterOn(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            water = true;
+            // water = true;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", true);
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Greenhouse water is on";
         }
+        public void run(){
+            action(this.gc);
+        }
     }
-    public class WaterOff extends Event {
-        public WaterOff(long delayTime) { super(delayTime); }
-        public void action() {
+
+    public class WaterOff extends EventClasses implements Event {
+        public WaterOff(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            water = false;
+            // water = false;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", false);
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Greenhouse water is off";
         }
-    }
-    public class ThermostatNight extends Event {
-        public ThermostatNight(long delayTime) {
-            super(delayTime);
+        public void run(){
+            action(this.gc);
         }
-        public void action() {
+    }
+
+    public class ThermostatNight extends EventClasses implements Event {
+        public ThermostatNight(long delayTime, GreenhouseControls gc) {
+            super(delayTime, gc);
+        }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            thermostat = "Night";
+            //thermostat = "Night";
+            TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Night");
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Thermostat on night setting";
         }
-    }
-    public class ThermostatDay extends Event {
-        public ThermostatDay(long delayTime) {
-            super(delayTime);
+        public void run(){
+            action(this.gc);
         }
-        public void action() {
+    }
+
+    public class ThermostatDay extends EventClasses implements Event {
+        public ThermostatDay(long delayTime, GreenhouseControls gc) {
+            super(delayTime, gc);
+        }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            thermostat = "Day";
+            // thermostat = "Day";
+            TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Day");
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Thermostat on day setting";
         }
+        public void run(){
+            action(this.gc);
+        }
     }
 
     // Event class for FansOn
-    public class FansOn extends Event {
-        public FansOn(long delayTime) { super(delayTime); }
-        public void action() {
+    public class FansOn extends EventClasses implements Event {
+        public FansOn(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            fans = true;
+            // fans = true;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", true);
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Fans are on";
         }
+        public void run(){
+            action(this.gc);
+        }
     }
 
     // Event class for FansOff
-    public class FansOff extends Event {
-        public FansOff(long delayTime) { super(delayTime); }
-        public void action() {
+    public class FansOff extends EventClasses implements Event {
+        public FansOff(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) {
             // Put hardware control code here.
-            fans = false;
+            // fans = false;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", false);
+            gc.setVariable(tt);
         }
         public String toString() {
             return "Fans are off";
         }
+        public void run(){
+            action(this.gc);
+        }
     }
 
     // Window Malfunction Event
-    public class WindowMalfunction extends Event {
-        public WindowMalfunction(long delayTime) { super(delayTime); }
-        public void action() throws ControllerException, IOException {
+    public class WindowMalfunction extends EventClasses implements Event {
+        public WindowMalfunction(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) throws ControllerException, IOException {
             // Put hardware control code here.
-            windowok = false;
+            //  windowok = false;
             errorcode = 1;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", false);
+            gc.setVariable(tt);
             throw new ControllerException("Window Malfunction Event", 1);
+        }
+        public void run(){
+            try {
+                action(this.gc);
+            } catch (ControllerException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     // Power Out Event
-    public class PowerOut extends Event {
-        public PowerOut(long delayTime) { super(delayTime); }
-        public void action() throws IOException, ControllerException {
+    public class PowerOut extends EventClasses implements Event {
+        public PowerOut(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) throws IOException, ControllerException {
             // Put hardware control code here.
-            poweron = false;
+            // poweron = false;
             errorcode = 2;
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", false);
+            gc.setVariable(tt);
             throw new ControllerException("Power Out Event", 2);
-
+        }
+        public void run(){
+            try {
+                action(this.gc);
+            } catch (ControllerException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public class Bell extends Event {
-
-        public Bell(long delayTime) {super(delayTime);}
-        public void action() {
+    public class Bell extends EventClasses implements Event {
+        public Bell(long delayTime, GreenhouseControls gc) {super(delayTime, gc);}
+        public void action(GreenhouseControls gc) {
             // nothing to do
+            // no TwoTuple as Bell is not a state
+        }
+        public void run() {
+            action(this.gc);
         }
         public String toString() { return "Bing!"; }
     }
 
     public class PowerOn implements Fixable {
         public void fix() {
-            poweron = true; // turns power on
+           // poweron = true; // turns power on
             errorcode = 0; //clears error code
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", true);
+            gc.setVariable(tt);
         }
 
         public void log() throws IOException {
@@ -199,8 +267,10 @@ public class EventClasses  {
 
     public class FixWindow implements Fixable {
         public void fix() {
-            windowok = true; // fixes window problem
+          //  windowok = true; // fixes window problem
             errorcode = 0; //clears error code
+            TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", true);
+            gc.setVariable(tt);
         }
 
         public void log() throws IOException {
@@ -214,10 +284,13 @@ public class EventClasses  {
         }
     }
 
-    public class Terminate extends Event {
-        public Terminate(long delayTime) { super(delayTime); }
-        public void action() { System.exit(0); }
+    public class Terminate extends EventClasses implements Event {
+        public Terminate(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
+        public void action(GreenhouseControls gc) { System.exit(0); }
         public String toString() { return "Terminating";  }
+        public void run(){
+            action(this.gc);
+        }
     }
 
     // Provide the means to create event classes from their names
@@ -240,7 +313,7 @@ public class EventClasses  {
         }
 
         // Now, make the event
-        EventClasses ec = new EventClasses(time);
+        EventClasses ec = new EventClasses(time, this.gc);
 
         Object event = null;
 
@@ -259,13 +332,15 @@ public class EventClasses  {
     }
 
     public class Restart extends EventClasses implements Event {
-        public Restart(long delayTime, String filename) {
-            super(delayTime);
-            eventsFile = filename;
-        }
-        public void action() {
-            //System.out.println("You're inside Restart.action");
 
+        public Restart(long delayTime, String filename, GreenhouseControls gc) {
+            super(delayTime, gc);
+            String eventsFile = filename;   //setting up eventsFile
+        }
+
+
+        public void action(GreenhouseControls gc) { // action() can only take GreenhouseControls as parameter
+            //System.out.println("You're inside Restart.action");
 
             // Make a new file class with input file specified in command line
             File myFile = new File(eventsFile);
@@ -296,8 +371,8 @@ public class EventClasses  {
                 e = getEvent(eventName, etime);
 
 
-
-                c.addEvent(e);
+                // adding event to controller
+                gc.addEvent(e);
 
 
 
@@ -306,6 +381,10 @@ public class EventClasses  {
             myReader.close();
 
         }
+
+        public void run(){
+            action(this.gc);
+        }   // run method from Event interface
 
         public String toString() {
             return "Restarting system";

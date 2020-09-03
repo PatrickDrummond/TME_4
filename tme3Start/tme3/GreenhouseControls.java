@@ -50,7 +50,6 @@ public class GreenhouseControls extends Controller implements Serializable, Runn
 
 
 
-
   // List of TwoTuples storing variables
   List<TwoTuple> variables = new ArrayList<>();
 
