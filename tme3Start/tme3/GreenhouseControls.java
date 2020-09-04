@@ -259,18 +259,18 @@ private int errorcode;
 
 
       // interates through controller eventList looking for malfunction events
-      for (int i = 0; i < gc1.c.eventList.size(); i++){
-        if (gc1.c.eventList.get(i) instanceof EventClasses.WindowMalfunction || gc1.c.eventList.get(i) instanceof EventClasses.PowerOut){
+      for (int i = 0; i < gc1.c.unstartedEvents.size(); i++){
+        if (gc1.c.unstartedEvents.get(i) instanceof EventClasses.WindowMalfunction || gc1.c.unstartedEvents.get(i) instanceof EventClasses.PowerOut){
           restore = true;
          // System.out.println("Before Continue");
           continue;
         }
         if(restore){
-          restoreList.add(gc1.c.eventList.get(i));
+          restoreList.add(gc1.c.unstartedEvents.get(i));
         }
       }
-      gc1.c.eventList.clear();
-      gc1.c.eventList.addAll(restoreList);
+      gc1.c.unstartedEvents.clear();
+      gc1.c.unstartedEvents.addAll(restoreList);
      // System.out.println("REstore list size " + restoreList.size());
     }
 

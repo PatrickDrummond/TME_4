@@ -17,6 +17,8 @@ public class EventClasses  {
 //    private String eventsFile = "examples1.txt";
     private int errorcode;
 
+
+    public boolean finished = false;
     private long eventTime;
     protected final long delayTime;
     GreenhouseControls gc;
@@ -48,6 +50,8 @@ public class EventClasses  {
             // light = true;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", true);
             gc.setVariable(tt);
+            finished = true;
+            //TODO: add finished  to all ev actions
         }
 
         public String toString() {
