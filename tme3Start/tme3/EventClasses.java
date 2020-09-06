@@ -37,6 +37,9 @@ public class EventClasses  {
         return System.currentTimeMillis() >= eventTime;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
 
     public class LightOn extends EventClasses implements Event  {
 
@@ -66,7 +69,7 @@ public class EventClasses  {
         @Override
         public void run() {
             action(this.gc);
-            System.out.println("From  LightON run() " + Thread.currentThread().getName());
+            //System.out.println("From  LightON run() " + Thread.currentThread().getName());
         }
     }
 
@@ -302,7 +305,10 @@ public class EventClasses  {
 
     public class Terminate extends EventClasses implements Event {
         public Terminate(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
-        public void action(GreenhouseControls gc) { System.exit(0); }
+        public void action(GreenhouseControls gc) {
+            //System.exit(0)
+            System.out.println("Terminate Action()");
+              }
         public String toString() { return "Terminating";  }
         public void run(){
             action(this.gc);
@@ -416,6 +422,7 @@ public class EventClasses  {
         }
 
         public void run(){
+            System.out.println("Inside restart.run()");
             action(this.gc);
         }   // run method from Event interface
 

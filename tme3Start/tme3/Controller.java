@@ -14,10 +14,10 @@
  */
 
 package tme3;
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-
 
 public class Controller {
 
@@ -98,34 +98,27 @@ public class Controller {
           //set the gui buttons
 
           // Placeholder state change for debugging purposes
-          System.out.println("Unstarted EventsList size: " + unstartedEvents.size());
+         // System.out.println("Inside Case Ready; Unstarted EventsList size: " + unstartedEvents.size());
           state = States.Running;
           break;
 
         case Running:
-
+          //System.out.println("Inside Case Running");
           //set GUI
 
           //here we put the running of the events from the list
-
           for (Event e : unstartedEvents){
             //start a thread
             if(e.ready()) {
               Thread t1 = new Thread(e);
               threadList.add(t1);
               t1.start();
-
-              //TODO: if we have a list of threads and a list of events, how do we know which event maps to what thread?
-
-              // Use HashMap to link events to their threads
               map.put(e, t1);
-
-
-
-
-              startedEvents.add(e);
-              unstartedEvents.remove(e);
             }
+            //TODO: if we have a list of threads and a list of events, how do we know which event maps to what thread?
+            // Use HashMap to link events to their threads
+            startedEvents.add(e);
+           //unstartedEvents.remove(e); //do we need to remove event e? throws exception
           }
 
           //now try join finished events...
@@ -134,14 +127,14 @@ public class Controller {
 
           //TODO: find a way to give every event a finished attribute/boolean
           for (Event e : startedEvents) {
-            //if the event is finished
-            //find its corresponding thread
 
-//            if(finished){
-//              //find corresponding thread in threadList
-//              //add it to toJoin
-//              //remove it from threadList
-//            }
+            if(e.isFinished()){
+              // check map for Key e, add corresponded Thread to toJoin
+              toJoin.add(map.get(e));
+              //remove from threadList
+              threadList.remove(map.get(e));
+            }
+
 
             for (Thread t : toJoin) {
               try {
@@ -150,8 +143,6 @@ public class Controller {
                 interruptedException.printStackTrace();
               }
             }
-
-
           }
 
           break;
@@ -169,10 +160,6 @@ public class Controller {
           //maybe give warning
           //destroy the gui object
           //destroy everything else
-
-
-
-
       }
     }
 
@@ -208,9 +195,9 @@ public class Controller {
   private void loadEvents(){
 
     // get arugment from GUI
-   String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
+   // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
-    File myFile = new File(eventsFile);
+    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt");
 
     // New scanner to read input file
     Scanner myReader = null;
@@ -245,7 +232,19 @@ public class Controller {
     //load events, probably take filename as argument gotten from gui and then take code from restart event
   }
 
+  public static void main(String[] args) {
 
+      SwingUtilities.invokeLater(new Runnable() {
+
+        public void run() {
+          JFrame frame = new MainFrame("Greenhouse");
+          frame.setSize(500,400);
+          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+          frame.setVisible(true);
+        }
+      });
+
+    }
 } ///:~
 
 

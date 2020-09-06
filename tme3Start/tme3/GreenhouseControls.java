@@ -26,14 +26,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class GreenhouseControls implements Serializable {
 
-//  private boolean light = false;
+  //  private boolean light = false;
 //  private boolean water = false;
 //  private boolean fans = false;
 //  private boolean windowok = true;
 //  private boolean poweron = true;
 //  private String thermostat = "Day";
-private String eventsFile = "examples1.txt";
-private int errorcode;
+  private String eventsFile = "examples1.txt";
+  private int errorcode;
 
   public GreenhouseControls() {
 
@@ -42,11 +42,9 @@ private int errorcode;
   public Controller c = new Controller(this);
 
 
-
   public Controller getC() {
     return c;
   }
-
 
 
   // List of TwoTuples storing variables
@@ -58,8 +56,7 @@ private int errorcode;
   ReentrantLock lock = new ReentrantLock();
 
 
-
-  public void setVariable(TwoTuple toSet){
+  public void setVariable(TwoTuple toSet) {
 
     lock.lock(); // locks for synchonirzation
 
@@ -67,16 +64,16 @@ private int errorcode;
     try {
       boolean found = false;  // checks if the variable is already stored in the TwoTuple, as we don't want multiple LightOns
 
-      for (TwoTuple t: variables) //for loop that goes through every TwoTuple inside variables
-              {
-                if (t.first == toSet.first){
-                  t.second = toSet.second;
-                  found = true;
-                  break;
-                }
+      for (TwoTuple t : variables) //for loop that goes through every TwoTuple inside variables
+      {
+        if (t.first == toSet.first) {
+          t.second = toSet.second;
+          found = true;
+          break;
         }
+      }
 
-      if (!found){
+      if (!found) {
         variables.add(toSet); //adds to the TwoTuple
       }
 
@@ -87,12 +84,7 @@ private int errorcode;
 
     lock.unlock(); // unlocks when finished
 
-    }
-
-
-
-
-
+  }
 
 
   public void shutdown() {
@@ -109,31 +101,30 @@ private int errorcode;
     serialize(this);
   }
 
-    public void serialize(GreenhouseControls gc) {
-      // Serialize and save entire tme3.GreenhouseControls object into file dump.out
-      try {
-        FileOutputStream f = new FileOutputStream(new File("dump.out"));
-        ObjectOutputStream o = new ObjectOutputStream(f);
+  public void serialize(GreenhouseControls gc) {
+    // Serialize and save entire tme3.GreenhouseControls object into file dump.out
+    try {
+      FileOutputStream f = new FileOutputStream(new File("dump.out"));
+      ObjectOutputStream o = new ObjectOutputStream(f);
 
-        // Write Objects to File
-        o.writeObject(gc);
+      // Write Objects to File
+      o.writeObject(gc);
 
-        o.close();  // must close the file or nothing gets written
-        f.close();
-        System.out.println("Serialized Data Saved in dump.out file");
+      o.close();  // must close the file or nothing gets written
+      f.close();
+      System.out.println("Serialized Data Saved in dump.out file");
 
-      } catch (FileNotFoundException e) {
-        System.out.println("File not found");
-      } catch (IOException e) {
-        System.out.println("Error initializing stream");
-      }
-
+    } catch (FileNotFoundException e) {
+      System.out.println("File not found");
+    } catch (IOException e) {
+      System.out.println("Error initializing stream");
     }
 
+  }
 
 
   // Method to return the saved errorCode
-  int getError(){
+  int getError() {
     return errorcode;
   }
 
@@ -164,7 +155,7 @@ private int errorcode;
 
   public class FixWindow implements Fixable {
     public void fix() {
-     // windowok = true; // fixes window problem
+      // windowok = true; // fixes window problem
       TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", true);
       setVariable(tt);
       errorcode = 0; //clears error code
@@ -181,12 +172,11 @@ private int errorcode;
     }
   }
 
-  Fixable getFixable(int errorcode){
-    if (errorcode == 1){
+  Fixable getFixable(int errorcode) {
+    if (errorcode == 1) {
       errorcode = 0;
       return (Fixable) new FixWindow();
-    }
-    else {
+    } else {
       errorcode = 0;
       return (Fixable) new PowerOn();
     }
@@ -198,7 +188,7 @@ private int errorcode;
     GreenhouseControls gc1;
 
 
-     void deserialize(){  // Deserializes based on Serializeable interface
+    void deserialize() {  // Deserializes based on Serializeable interface
 
       try {
         FileInputStream fileIn = new FileInputStream("dump.out");
@@ -217,18 +207,18 @@ private int errorcode;
     }
 
 
-    void systemStatus(){  // Prints the status of every variable that was deserialized from dump.out
-      for(int i = 0; i < variables.size(); i++ ){
+    void systemStatus() {  // Prints the status of every variable that was deserialized from dump.out
+      for (int i = 0; i < variables.size(); i++) {
         Arrays.toString(variables.toArray());   // from Stack Overflow, will it work?
         System.out.println("Inside systemStatus()");
       }
     }
 
-    void repairSystem(){
-       gc1.getFixable(gc1.getError()); // repairs the system depending on the errorcode
+    void repairSystem() {
+      gc1.getFixable(gc1.getError()); // repairs the system depending on the errorcode
     }
 
-    void restoreEvents(){
+    void restoreEvents() {
 
       EventClasses ec = new EventClasses(0, gc1);
       EventClasses.Restart r = ec.new Restart(0, gc1.eventsFile, gc1); // new events file for gc1
@@ -236,41 +226,40 @@ private int errorcode;
       // System.out.println("gc1 event list size: " + gc1.eventList.size());  // checks if events were inserted correctly
     }
 
-    void systemContinue(){
-    //System.out.println(gc1.eventsFile); // checks for proper event file
+    void systemContinue() {
+      //System.out.println(gc1.eventsFile); // checks for proper event file
       gc1.c.run(); // runs the events that were added to gc1.eventsFile
     }
 
 
     // the gc1 deserialized object is only supposed to run from after the malfunction
     // this method checks for where the malfunction was, and only adds events from after that
-    public void cutOldEvents(){
+    public void cutOldEvents() {
 
-       EventClasses ec = new EventClasses(0, gc1);
+      EventClasses ec = new EventClasses(0, gc1);
 
       List<Event> restoreList = new ArrayList<>();
       Boolean restore = false;
 
 
       // interates through controller eventList looking for malfunction events
-      for (int i = 0; i < gc1.c.unstartedEvents.size(); i++){
-        if (gc1.c.unstartedEvents.get(i) instanceof EventClasses.WindowMalfunction || gc1.c.unstartedEvents.get(i) instanceof EventClasses.PowerOut){
+      for (int i = 0; i < gc1.c.unstartedEvents.size(); i++) {
+        if (gc1.c.unstartedEvents.get(i) instanceof EventClasses.WindowMalfunction || gc1.c.unstartedEvents.get(i) instanceof EventClasses.PowerOut) {
           restore = true;
-         // System.out.println("Before Continue");
+          // System.out.println("Before Continue");
           continue;
         }
-        if(restore){
+        if (restore) {
           restoreList.add(gc1.c.unstartedEvents.get(i));
         }
       }
       gc1.c.unstartedEvents.clear();
       gc1.c.unstartedEvents.addAll(restoreList);
-     // System.out.println("REstore list size " + restoreList.size());
+      // System.out.println("REstore list size " + restoreList.size());
     }
 
 
   }
-
 
 
   public static void printUsage() {
@@ -279,61 +268,53 @@ private int errorcode;
     System.out.println("  java tme3.GreenhouseControls -d dump.out");
   }
 
-//---------------------------------------------------------
-    public static void main(String[] args) {
-	try {
+  //---------------------------------------------------------
+  public static void main(String[] args) {
+    //try {
 
-	    //String option = args[0];
-	    //String filename = args[1];
+    //String option = args[0];
+    //String filename = args[1];
 
-      String option = "-f";
-     String filename = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
+//      String option = "-f";
+//     String filename = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
+//
+//	    if ( !(option.equals("-f")) && !(option.equals("-d")) ) {
+//		System.out.println("Invalid option");
+//		printUsage();
+//	    }
+//
+//
+    GreenhouseControls gc = new GreenhouseControls();
+//        EventClasses ec = new EventClasses(0, gc);
+//
+//	    if (option.equals("-f"))  {
+//		gc.c.addEvent(ec.new Restart(0,filename, gc));
+//	    }
 
-	    if ( !(option.equals("-f")) && !(option.equals("-d")) ) {
-		System.out.println("Invalid option");
-		printUsage();
-	    }
-
-
-	    GreenhouseControls gc = new GreenhouseControls();
-        EventClasses ec = new EventClasses(0, gc);
-
-	    if (option.equals("-f"))  {
-		gc.c.addEvent(ec.new Restart(0,filename, gc));
-	    }
-
-	   gc.c.run();
-
-
-
-      // System.out.println("Eventlist Size: " + gc.eventList.size());
+    gc.c.run();
 
 
+    // System.out.println("Eventlist Size: " + gc.eventList.size());
 
 
-
-	    if (option.equals("-d")){
-
-        Restore r = new Restore();
-          r.deserialize(); // Deserializes the dump.out back into a tme3.GreenhouseControls object
-          r.systemStatus(); // Prints to the user the status of the GC variables
-          r.repairSystem(); // Repairs the windows or power depending on error code
-          r.restoreEvents();
-          r.cutOldEvents();
-          r.systemContinue();
-
+//	    if (option.equals("-d")){
+//
+//        Restore r = new Restore();
+//          r.deserialize(); // Deserializes the dump.out back into a tme3.GreenhouseControls object
+//          r.systemStatus(); // Prints to the user the status of the GC variables
+//          r.repairSystem(); // Repairs the windows or power depending on error code
+//          r.restoreEvents();
+//          r.cutOldEvents();
+//          r.systemContinue();
 
 
+//        }
+//	}
+//	catch (ArrayIndexOutOfBoundsException e) {
+//	    System.out.println("Invalid number of parameters");
+//	    printUsage();
+//	}
+//    }
 
-
-
-
-        }
-	}
-	catch (ArrayIndexOutOfBoundsException e) {
-	    System.out.println("Invalid number of parameters");
-	    printUsage();
-	}
-    }
-
-} ///:~
+  } ///:~
+}

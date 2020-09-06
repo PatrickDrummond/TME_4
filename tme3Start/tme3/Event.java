@@ -41,4 +41,6 @@ public interface Event extends Runnable {
   public void run();
     //System.out.println("Running from inside event run()");
 
+  public boolean isFinished();
+
 } ///:~
