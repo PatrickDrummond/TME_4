@@ -14,11 +14,14 @@
  */
 
 package tme3;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 
 public class Controller {
 
+  // States for a FSM
   enum States {
     StartUp,
     NotReady,
@@ -39,6 +42,9 @@ public class Controller {
   public List<Event> unstartedEvents = new ArrayList<Event>();
   public List<Event> startedEvents = new ArrayList<Event>();
   public List<Event> finishedEvents = new ArrayList<Event>();
+
+  // A map to tie Event objects with their threads
+  public Map<Event, Thread> map = new HashMap<>();
 
 
   // list of threads
@@ -67,6 +73,9 @@ public class Controller {
         case NotReady:
           //set gui buttons
           //wait for a button to be clicked
+
+          // move straight to loading for debugging
+          this.state = States.Loading;
           break;
 
         case Loading:
@@ -88,6 +97,9 @@ public class Controller {
 
           //set the gui buttons
 
+          // Placeholder state change for debugging purposes
+          System.out.println("Unstarted EventsList size: " + unstartedEvents.size());
+          state = States.Running;
           break;
 
         case Running:
@@ -104,7 +116,12 @@ public class Controller {
               t1.start();
 
               //TODO: if we have a list of threads and a list of events, how do we know which event maps to what thread?
-              //use a map or even a tuple
+
+              // Use HashMap to link events to their threads
+              map.put(e, t1);
+
+
+
 
               startedEvents.add(e);
               unstartedEvents.remove(e);
@@ -189,6 +206,42 @@ public class Controller {
 
 
   private void loadEvents(){
+
+    // get arugment from GUI
+   String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
+
+    File myFile = new File(eventsFile);
+
+    // New scanner to read input file
+    Scanner myReader = null;
+    try {
+      myReader = new Scanner(myFile);
+    } catch (FileNotFoundException fileNotFoundException) {
+      fileNotFoundException.printStackTrace();
+    }
+    while (myReader.hasNextLine()) {
+      String data = myReader.nextLine();
+      String[] eventsArray;
+      eventsArray = data.split(",");
+      String eventName = eventsArray[0].split("=")[1];
+      String eventTime = eventsArray[1].split("=")[1];
+      //System.out.println("Name" + eventName);
+      //System.out.println("Time" + eventTime);
+      Long etime = Long.parseLong(eventTime);
+
+      // call getEvent() to get events to add to eventList array
+
+      EventClasses ec = new EventClasses(0, this.gc); // EventClasses object to use methods on
+      Event e;
+
+      e = ec.getEvent(eventName, etime);
+
+      // adding event to controller
+      gc.c.addEvent(e);
+
+    }
+    myReader.close();
+
     //load events, probably take filename as argument gotten from gui and then take code from restart event
   }
 

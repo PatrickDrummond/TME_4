@@ -50,7 +50,7 @@ private int errorcode;
 
 
   // List of TwoTuples storing variables
-  List<TwoTuple> variables = new ArrayList<>();
+  static List<TwoTuple> variables = new ArrayList<>(); // made variables static
 
 
   // Synchornized lock to prevent multiple events from accessing TwoTuple at the same time
@@ -218,16 +218,10 @@ private int errorcode;
 
 
     void systemStatus(){  // Prints the status of every variable that was deserialized from dump.out
-
-      //TODO: change this method for TwoTuple
-//
-//      System.out.println("Light Status: " + gc1.light);
-//      System.out.println("Water Status: " + gc1.water);
-//      System.out.println("Fans Status: " + gc1.fans);
-//      System.out.println("Thermostat Status: " + gc1.thermostat);
-//      System.out.println("Power Status: " + gc1.poweron);
-//      System.out.println("Window Status: " + gc1.windowok);
-//      System.out.println("Errorcode: " + gc1.errorcode);
+      for(int i = 0; i < variables.size(); i++ ){
+        Arrays.toString(variables.toArray());   // from Stack Overflow, will it work?
+        System.out.println("Inside systemStatus()");
+      }
     }
 
     void repairSystem(){
@@ -293,7 +287,7 @@ private int errorcode;
 	    //String filename = args[1];
 
       String option = "-f";
-      String filename = "C:\\Users\\Frank\\IdeaProjects\\TME_4\\tme3Start\\examples1.txt";
+     String filename = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
 
 	    if ( !(option.equals("-f")) && !(option.equals("-d")) ) {
 		System.out.println("Invalid option");

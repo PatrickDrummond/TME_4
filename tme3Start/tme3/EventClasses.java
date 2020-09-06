@@ -51,7 +51,7 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", true);
             gc.setVariable(tt);
             finished = true;
-            //TODO: add finished  to all ev actions
+
         }
 
         public String toString() {
@@ -80,6 +80,7 @@ public class EventClasses  {
             // light = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", false);
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() { return "Light is off"; }
 
@@ -99,6 +100,7 @@ public class EventClasses  {
             // water = true;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", true);
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Greenhouse water is on";
@@ -115,6 +117,7 @@ public class EventClasses  {
             // water = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", false);
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Greenhouse water is off";
@@ -133,6 +136,7 @@ public class EventClasses  {
             //thermostat = "Night";
             TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Night");
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Thermostat on night setting";
@@ -151,6 +155,7 @@ public class EventClasses  {
             // thermostat = "Day";
             TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Day");
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Thermostat on day setting";
@@ -168,6 +173,7 @@ public class EventClasses  {
             // fans = true;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", true);
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Fans are on";
@@ -185,6 +191,7 @@ public class EventClasses  {
             // fans = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", false);
             gc.setVariable(tt);
+            finished = true;
         }
         public String toString() {
             return "Fans are off";
@@ -203,6 +210,7 @@ public class EventClasses  {
             errorcode = 1;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", false);
             gc.setVariable(tt);
+            finished = true;
             throw new ControllerException("Window Malfunction Event", 1);
         }
         public void run(){
@@ -225,6 +233,7 @@ public class EventClasses  {
             errorcode = 2;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", false);
             gc.setVariable(tt);
+            finished = true;
             throw new ControllerException("Power Out Event", 2);
         }
         public void run(){
@@ -243,6 +252,7 @@ public class EventClasses  {
         public void action(GreenhouseControls gc) {
             // nothing to do
             // no TwoTuple as Bell is not a state
+            finished = true;
         }
         public void run() {
             action(this.gc);
@@ -256,6 +266,7 @@ public class EventClasses  {
             errorcode = 0; //clears error code
             TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", true);
             gc.setVariable(tt);
+            finished = true;
         }
 
         public void log() throws IOException {
@@ -275,6 +286,7 @@ public class EventClasses  {
             errorcode = 0; //clears error code
             TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", true);
             gc.setVariable(tt);
+            finished = true;
         }
 
         public void log() throws IOException {
@@ -294,6 +306,7 @@ public class EventClasses  {
         public String toString() { return "Terminating";  }
         public void run(){
             action(this.gc);
+            finished = true;
         }
     }
 
