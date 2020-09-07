@@ -15,9 +15,14 @@
 
 package tme3;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.awt.*;
+import java.util.List;
+
 
 public class Controller {
 
@@ -37,6 +42,8 @@ public class Controller {
 
 
   //GUI that belongs to this controller
+
+
 
   // A class from java.util to hold Event objects:
   public List<Event> unstartedEvents = new ArrayList<Event>();
@@ -110,15 +117,17 @@ public class Controller {
           for (Event e : unstartedEvents){
             //start a thread
             if(e.ready()) {
+
               Thread t1 = new Thread(e);
               threadList.add(t1);
               t1.start();
               map.put(e, t1);
+
             }
             //TODO: if we have a list of threads and a list of events, how do we know which event maps to what thread?
             // Use HashMap to link events to their threads
             startedEvents.add(e);
-           //unstartedEvents.remove(e); //do we need to remove event e? throws exception
+           //unstartedEvents.remove(e); //do we need to remove event e? throws ConcurrentModificationException
           }
 
           //now try join finished events...
@@ -127,8 +136,9 @@ public class Controller {
 
           //TODO: find a way to give every event a finished attribute/boolean
           for (Event e : startedEvents) {
-
+              int x = 1;
             if(e.isFinished()){
+              unstartedEvents.remove(e);
               // check map for Key e, add corresponded Thread to toJoin
               toJoin.add(map.get(e));
               //remove from threadList
@@ -145,10 +155,14 @@ public class Controller {
             }
           }
 
+          state = States.Finished;
           break;
 
         case Finished:
             //set the gui and do nothing
+          int x = 1;
+          System.out.println("Inside States.Finished");
+          System.exit(3); // placeholder exit for debugging
            break;
 
         case Suspended:
@@ -197,7 +211,8 @@ public class Controller {
     // get arugment from GUI
    // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
-    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt");
+    // Will eventually get File from GUI
+    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples2.txt");
 
     // New scanner to read input file
     Scanner myReader = null;
@@ -237,10 +252,78 @@ public class Controller {
       SwingUtilities.invokeLater(new Runnable() {
 
         public void run() {
-          JFrame frame = new MainFrame("Greenhouse");
-          frame.setSize(500,400);
+          JFrame frame = new JFrame("Greenhouse");
+          frame.setSize(800,640);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.setVisible(true);
+
+          // Creating the Pulldown MenuBar and adding components
+          JMenuBar mb = new JMenuBar();
+          JMenu m1 = new JMenu("OPTIONS");
+          mb.add(m1);
+          JMenuItem m11 = new JMenuItem("New Window");
+          JMenuItem m22 = new JMenuItem("Close Window");
+          JMenuItem m33 = new JMenuItem("Open Events");
+          JMenuItem m44 = new JMenuItem("Restore");
+          JMenuItem m55 = new JMenuItem("Exit");
+          m1.add(m11);
+          m1.add(m22);
+          m1.add(m33);
+          m1.add(m44);
+          m1.add(m55);
+
+
+          // Creating the buttons panel at bottom and adding components
+          JPanel buttonPanel = new JPanel(); // the panel is not visible in output
+          JButton start = new JButton("Start");
+          JButton reset = new JButton("Reset");
+          JButton terminate = new JButton("Terminate");
+          JButton suspend = new JButton("Suspend");
+          JButton resume = new JButton("Resume");
+          buttonPanel.add(start);
+          buttonPanel.add(reset);
+          buttonPanel.add(terminate);
+          buttonPanel.add(suspend);
+          buttonPanel.add(resume);
+
+          // Creating the PopUp menu that mirrors the buttonPanel
+          JPopupMenu popup = new JPopupMenu();
+          JMenuItem startPop = new JMenuItem("Start");
+          JMenuItem resetPop = new JMenuItem("Reset");
+          JMenuItem terminatePop = new JMenuItem("Terminate");
+          JMenuItem suspendPop = new JMenuItem("Suspend");
+          JMenuItem resumePop = new JMenuItem("Resume");
+          popup.add(startPop);
+          popup.add(resetPop);
+          popup.add(terminatePop);
+          popup.add(suspendPop);
+          popup.add(resumePop);
+
+          // Mouse listener for PopUp
+          frame.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              super.mouseClicked(e);
+              popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+          });
+
+          // Text Area at the Center
+          JTextArea ta = new JTextArea();
+
+          //Adding Components to the frame.
+          frame.getContentPane().add(BorderLayout.SOUTH, buttonPanel);
+          frame.getContentPane().add(BorderLayout.NORTH, mb);
+          frame.getContentPane().add(BorderLayout.CENTER, ta);
+          frame.setVisible(true);
+
+          // Gives actions to buttonPanel
+
+
+
+
+
+
         }
       });
 

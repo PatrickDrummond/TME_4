@@ -42,11 +42,9 @@ public class EventClasses  {
     }
 
     public class LightOn extends EventClasses implements Event  {
-
         public LightOn(long delayTime, GreenhouseControls gc) {
             super(delayTime, gc);
         }
-
         public void action(GreenhouseControls gc) {
             // Put hardware control code here to
             // physically turn on the light.
@@ -54,18 +52,15 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", true);
             gc.setVariable(tt);
             finished = true;
-
+            System.out.println(toString());
         }
-
         public String toString() {
             return "Light is on";
         }
-
         @Override
         public void start() {
             eventTime = System.currentTimeMillis() + delayTime;
         }
-
         @Override
         public void run() {
             action(this.gc);
@@ -76,23 +71,24 @@ public class EventClasses  {
 
     public class LightOff extends EventClasses implements Event {
         public LightOff(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
-
         public void action(GreenhouseControls gc) {
             // Put hardware control code here to
             // physically turn off the light.
             // light = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Light", false);
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() { return "Light is off"; }
-
-
-
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
+        }
         @Override
         public void run() {
             action(this.gc);
-            System.out.println("From  LightOFF run() " + Thread.currentThread().getName());
+            //System.out.println("From  LightOFF run() " + Thread.currentThread().getName());
         }
     }
 
@@ -103,10 +99,15 @@ public class EventClasses  {
             // water = true;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", true);
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
             return "Greenhouse water is on";
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             action(this.gc);
@@ -120,10 +121,15 @@ public class EventClasses  {
             // water = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Water", false);
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
             return "Greenhouse water is off";
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             action(this.gc);
@@ -139,10 +145,15 @@ public class EventClasses  {
             //thermostat = "Night";
             TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Night");
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
             return "Thermostat on night setting";
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             action(this.gc);
@@ -158,6 +169,7 @@ public class EventClasses  {
             // thermostat = "Day";
             TwoTuple<String, String> tt = new TwoTuple<>("Thermostat", "Day");
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
@@ -176,10 +188,15 @@ public class EventClasses  {
             // fans = true;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", true);
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
             return "Fans are on";
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             action(this.gc);
@@ -194,10 +211,15 @@ public class EventClasses  {
             // fans = false;
             TwoTuple<String, Boolean> tt = new TwoTuple<>("Fans", false);
             gc.setVariable(tt);
+            System.out.println(toString());
             finished = true;
         }
         public String toString() {
             return "Fans are off";
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             action(this.gc);
@@ -214,7 +236,12 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", false);
             gc.setVariable(tt);
             finished = true;
+
             throw new ControllerException("Window Malfunction Event", 1);
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run(){
             try {
@@ -239,6 +266,10 @@ public class EventClasses  {
             finished = true;
             throw new ControllerException("Power Out Event", 2);
         }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
+        }
         public void run(){
             try {
                 action(this.gc);
@@ -255,7 +286,12 @@ public class EventClasses  {
         public void action(GreenhouseControls gc) {
             // nothing to do
             // no TwoTuple as Bell is not a state
+            System.out.println(toString());
             finished = true;
+        }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
         }
         public void run() {
             action(this.gc);
@@ -310,6 +346,10 @@ public class EventClasses  {
             System.out.println("Terminate Action()");
               }
         public String toString() { return "Terminating";  }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
+        }
         public void run(){
             action(this.gc);
             finished = true;
