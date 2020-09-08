@@ -19,12 +19,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.*;
 import java.awt.*;
 import java.util.List;
 
 
-public class Controller  {
+public class Controller implements Serializable {
 
   // States for a FSM
   enum States {
@@ -203,7 +204,7 @@ public class Controller  {
    // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
     // Will eventually get File from GUI
-    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt");
+    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples3.txt");
 
     // New scanner to read input file
     Scanner myReader = null;

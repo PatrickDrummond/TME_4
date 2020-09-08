@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
-public class EventClasses  {
+public class EventClasses implements Serializable {
     //    private boolean light = false;
 //    private boolean water = false;
 //    private boolean fans = false;
@@ -244,7 +244,7 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", false);
             gc.setVariable(tt);
             finished = true;
-            throw new ControllerException("Window Malfunction Event", 1);
+            throw new ControllerException("Window Malfunction Event", 1, gc);
         }
         @Override
         public void start() {
@@ -271,7 +271,7 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("PowerOn", false);
             gc.setVariable(tt);
             finished = true;
-            throw new ControllerException("Power Out Event", 2);
+            throw new ControllerException("Power Out Event", 2, gc);
         }
         @Override
         public void start() {

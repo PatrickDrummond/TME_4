@@ -79,7 +79,7 @@ public class GreenhouseControls implements Serializable {
     lock.unlock(); // unlocks when finished
   }
 
-
+//TODO: connect this method to Controller so it runs when a malfunction event is called
   public void shutdown() {
     // the shutdown method must also serialize the current GreenhouseObject
     if (errorcode == 0) {
