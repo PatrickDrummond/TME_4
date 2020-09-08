@@ -24,7 +24,7 @@ import java.awt.*;
 import java.util.List;
 
 
-public class Controller {
+public class Controller  {
 
   // States for a FSM
   enum States {
@@ -81,13 +81,13 @@ public class Controller {
           //set gui buttons
           //wait for a button to be clicked
 
-          // move straight to loading for debugging
+          // Placeholder state change for debugging
           this.state = States.Loading;
           break;
 
         case Loading:
-          //load the events
 
+          // Load the events
           try {
             loadEvents();
           } catch (Exception e){
@@ -95,7 +95,6 @@ public class Controller {
             //make some kind of gui popup
             break;
           } finally {
-            //make sure we dont get here from the catch
             state = States.Ready;
           }
 
@@ -105,36 +104,30 @@ public class Controller {
           //set the gui buttons
 
           // Placeholder state change for debugging purposes
-         // System.out.println("Inside Case Ready; Unstarted EventsList size: " + unstartedEvents.size());
           state = States.Running;
           break;
 
         case Running:
-          //System.out.println("Inside Case Running");
           //set GUI
+
+          // Sort unstartedEvents list by delayTime
+          unstartedEvents.sort(Comparator.comparing(Event::getDelayTime));
 
           //here we put the running of the events from the list
           for (Event e : unstartedEvents){
             //start a thread
             if(e.ready()) {
-
               Thread t1 = new Thread(e);
               threadList.add(t1);
               t1.start();
               map.put(e, t1);
-
             }
-            //TODO: if we have a list of threads and a list of events, how do we know which event maps to what thread?
-            // Use HashMap to link events to their threads
             startedEvents.add(e);
            //unstartedEvents.remove(e); //do we need to remove event e? throws ConcurrentModificationException
           }
 
           //now try join finished events...
           //check if there are any finished events, if so join their threads
-
-
-          //TODO: find a way to give every event a finished attribute/boolean
           for (Event e : startedEvents) {
               int x = 1;
             if(e.isFinished()){
@@ -145,7 +138,6 @@ public class Controller {
               threadList.remove(map.get(e));
             }
 
-
             for (Thread t : toJoin) {
               try {
                 t.join();
@@ -154,14 +146,13 @@ public class Controller {
               }
             }
           }
-
+          shutdown();
           state = States.Finished;
           break;
 
         case Finished:
             //set the gui and do nothing
           int x = 1;
-          System.out.println("Inside States.Finished");
           System.exit(3); // placeholder exit for debugging
            break;
 
@@ -212,7 +203,7 @@ public class Controller {
    // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
     // Will eventually get File from GUI
-    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples2.txt");
+    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt");
 
     // New scanner to read input file
     Scanner myReader = null;
@@ -227,8 +218,6 @@ public class Controller {
       eventsArray = data.split(",");
       String eventName = eventsArray[0].split("=")[1];
       String eventTime = eventsArray[1].split("=")[1];
-      //System.out.println("Name" + eventName);
-      //System.out.println("Time" + eventTime);
       Long etime = Long.parseLong(eventTime);
 
       // call getEvent() to get events to add to eventList array

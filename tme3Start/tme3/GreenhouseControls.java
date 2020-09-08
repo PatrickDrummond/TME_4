@@ -60,10 +60,8 @@ public class GreenhouseControls implements Serializable {
 
     lock.lock(); // locks for synchonirzation
 
-    // lock requires try/catch (?)
     try {
       boolean found = false;  // checks if the variable is already stored in the TwoTuple, as we don't want multiple LightOns
-
       for (TwoTuple t : variables) //for loop that goes through every TwoTuple inside variables
       {
         if (t.first == toSet.first) {
@@ -72,33 +70,30 @@ public class GreenhouseControls implements Serializable {
           break;
         }
       }
-
       if (!found) {
         variables.add(toSet); //adds to the TwoTuple
       }
-
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
     lock.unlock(); // unlocks when finished
-
   }
 
 
   public void shutdown() {
+    // the shutdown method must also serialize the current GreenhouseObject
+    if (errorcode == 0) {
+      System.out.println("Greenhouse Operations Successful. Shutting Down.");
+    }
 
     if (errorcode == 1) {
       System.out.println("Window Malfunction, Greenhouse Shutting Down");
+      serialize(this);
     }
     if (errorcode == 2) {
       System.out.println("Power Out, Greenhouse Shutting Down");
-
+      serialize(this);
     }
-
-    // the shutdown method must also serialize the current GreenhouseObject
-    serialize(this);
   }
 
   public void serialize(GreenhouseControls gc) {
@@ -257,8 +252,6 @@ public class GreenhouseControls implements Serializable {
       gc1.c.unstartedEvents.addAll(restoreList);
       // System.out.println("REstore list size " + restoreList.size());
     }
-
-
   }
 
 

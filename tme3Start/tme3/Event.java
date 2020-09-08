@@ -43,4 +43,6 @@ public interface Event extends Runnable {
 
   public boolean isFinished();
 
+  public long getDelayTime();
+
 } ///:~

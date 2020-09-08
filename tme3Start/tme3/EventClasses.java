@@ -41,6 +41,10 @@ public class EventClasses  {
         return finished;
     }
 
+    public long getDelayTime(){
+        return delayTime;
+    }
+
     public class LightOn extends EventClasses implements Event  {
         public LightOn(long delayTime, GreenhouseControls gc) {
             super(delayTime, gc);
@@ -175,6 +179,10 @@ public class EventClasses  {
         public String toString() {
             return "Thermostat on day setting";
         }
+        @Override
+        public void start() {
+            eventTime = System.currentTimeMillis() + delayTime;
+        }
         public void run(){
             action(this.gc);
         }
@@ -236,7 +244,6 @@ public class EventClasses  {
             TwoTuple<String, Boolean> tt = new TwoTuple<>("windowok", false);
             gc.setVariable(tt);
             finished = true;
-
             throw new ControllerException("Window Malfunction Event", 1);
         }
         @Override
@@ -343,7 +350,7 @@ public class EventClasses  {
         public Terminate(long delayTime, GreenhouseControls gc) { super(delayTime, gc); }
         public void action(GreenhouseControls gc) {
             //System.exit(0)
-            System.out.println("Terminate Action()");
+            System.out.println(toString());
               }
         public String toString() { return "Terminating";  }
         @Override
