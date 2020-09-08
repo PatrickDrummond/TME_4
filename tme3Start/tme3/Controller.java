@@ -66,6 +66,7 @@ public class Controller implements Serializable {
 
   Controller(GreenhouseControls gc){
     this.gc = gc;
+    this.gc.c = this;
      state = States.StartUp;
   }
 
@@ -90,7 +91,7 @@ public class Controller implements Serializable {
 
           // Load the events
           try {
-            loadEvents();
+            //loadEvents();
           } catch (Exception e){
             state = States.NotReady;
             //make some kind of gui popup
@@ -198,13 +199,53 @@ public class Controller implements Serializable {
   }
 
 
-  private void loadEvents(){
+  public void start(){
+    unstartedEvents.sort(Comparator.comparing(Event::getDelayTime));
+
+    //here we put the running of the events from the list
+    for (Event e : unstartedEvents){
+      //start a thread
+      if(e.ready()) {
+        Thread t1 = new Thread(e);
+        threadList.add(t1);
+        t1.start();
+        map.put(e, t1);
+      }
+      startedEvents.add(e);
+
+
+      //unstartedEvents.remove(e); //do we need to remove event e? throws ConcurrentModificationException
+    }
+
+    //now try join finished events...
+    //check if there are any finished events, if so join their threads
+    for (Event e : startedEvents) {
+      int x = 1;
+      if (e.isFinished()) {
+        unstartedEvents.remove(e);
+        // check map for Key e, add corresponded Thread to toJoin
+        toJoin.add(map.get(e));
+        //remove from threadList
+        threadList.remove(map.get(e));
+      }
+    }
+      for (Thread t : toJoin) {
+        try {
+          t.join();
+        } catch (InterruptedException interruptedException) {
+          interruptedException.printStackTrace();
+        }
+      }
+    }
+
+
+  public void loadEvents(String path){
 
     // get arugment from GUI
    // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
     // Will eventually get File from GUI
-    File myFile = new File("/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples3.txt");
+    File myFile = new File(path);
 
     // New scanner to read input file
     Scanner myReader = null;

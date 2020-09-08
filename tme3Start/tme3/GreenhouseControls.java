@@ -39,7 +39,7 @@ public class GreenhouseControls implements Serializable {
 
   }
 
-  public Controller c = new Controller(this);
+  public Controller c;
 
 
   public Controller getC() {
