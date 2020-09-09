@@ -22,6 +22,7 @@ public class ControllerException extends Throwable {
     Timestamp ts = new Timestamp(time);
 
 
+    // could make Controller Exception take a Controller?
     public ControllerException(String errorMessage, int errorCode, GreenhouseControls gc) throws IOException {
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
@@ -52,7 +53,11 @@ public class ControllerException extends Throwable {
             }
         }
 
-        //TODO: Thread class can't implement serializeable? Must stop and kills threads
+        //TODO: Thread class can't implement serializeable, Must stop and kills threads
+
+        // First, kill all the threads
+
+
     public void serialize(GreenhouseControls gc) {
         // Serialize and save entire tme3.GreenhouseControls object into file dump.out
         System.out.println("Inside ControllerException.serialize");

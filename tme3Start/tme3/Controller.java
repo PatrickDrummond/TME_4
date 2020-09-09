@@ -64,7 +64,7 @@ public class Controller implements Serializable {
   Controller(GreenhouseControls gc){
     this.gc = gc;
     this.gc.c = this;
-     state = States.StartUp;
+    state = States.StartUp;
   }
 
   public void run() {

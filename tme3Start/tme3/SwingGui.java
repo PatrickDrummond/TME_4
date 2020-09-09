@@ -46,6 +46,10 @@ public class SwingGui {
 
     JTextArea ta = new JTextArea();
 
+    JTextArea directions = new JTextArea();
+
+    JTextArea fileText = new JTextArea();
+
     public SwingGui(Controller c) {
 
         this.c = c;
@@ -60,6 +64,8 @@ public class SwingGui {
         frame.getContentPane().add(BorderLayout.SOUTH, buttonPanel);
         frame.getContentPane().add(BorderLayout.NORTH, mb);
         frame.getContentPane().add(BorderLayout.CENTER, ta);
+        frame.getContentPane().add(BorderLayout.WEST, directions);
+        frame.getContentPane().add(BorderLayout.EAST, fileText);
         frame.setVisible(true);
 
         //pulldown menu
@@ -99,6 +105,9 @@ public class SwingGui {
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         });
+
+        directions.setText("Scrollable Directions Text");
+        fileText.append("No File Loaded");
     }
 
     //TODO: SUSPEND; RESUME; TERMINATE; RESTORE
@@ -128,6 +137,7 @@ public class SwingGui {
             String fileName = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
             c.loadEvents(fileName);
             fileLoaded = true;
+            fileText.setText("File Loaded");
             //if it succeeds change the state of the gui
             //change the state of the controller
 
@@ -148,7 +158,6 @@ public class SwingGui {
                 // Show Variable Status on GUI
                 ta.append("\nGreenhouse Variable Status" + c.printVariable());
 
-               // ta.append(gc.getVariables().toString());
             } if (!fileLoaded) {
                 ta.append("\nError: No File Loaded. Please Load a New File");
             }
@@ -158,9 +167,9 @@ public class SwingGui {
         public class Terminate implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 //TODO: what is terminate supposed to even do
-
                 c.unstartedEvents.clear();
                 fileLoaded = false;
+                fileText.setText("No File Selected");
                 // Print what's going on
                 ta.append("\nTerminate Action: File Cleared. Please Load A New File");
             }
@@ -168,29 +177,29 @@ public class SwingGui {
 
     public class Reset implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //TODO: Make Reset Work.. Make ta just for your file. Reset() will clear everything
-
-
+            //Clears text area
+            ta.setText("");
+            fileLoaded = false;
+            fileText.setText("No File Selected");
         }
     }
 
     public class Exit implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-
             Object[] options = { "Yes", "No" };
             int n = JOptionPane.showOptionDialog(new JFrame(),
-                    "Exit Every Greenhouse?", "Exit",
+                    "Are you sure you want to exit?", "Confirm Exit",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                     options, options[1]);
             if(n == JOptionPane.OK_OPTION){ // Afirmative
-                //....
+                //Exit the Application
                 System.exit(0);
             }
             if(n == JOptionPane.NO_OPTION){ // negative
-                //....
+                // Do Nothing
             }
             if(n == JOptionPane.CLOSED_OPTION){ // closed the dialog
-                //....
+                // Do Nothing Also
             }
         }
     }
@@ -200,18 +209,4 @@ public class SwingGui {
             frame.dispose();
         }
     }
-
-
-//    SwingUtilities.invokeLater(new Runnable() {
-//
-//        public void run() {
-//            JFrame frame = new MainFrame("Greenhouse SwingGUI");
-//            frame.setSize(500,400);
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setVisible(true);
-//        }
-//    });
-
-
-
 }
