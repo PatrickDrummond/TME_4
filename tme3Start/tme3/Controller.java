@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Controller implements Serializable {
@@ -40,10 +41,7 @@ public class Controller implements Serializable {
   }
 
   States state;
-
-
   //GUI that belongs to this controller
-
 
 
   // A class from java.util to hold Event objects:
@@ -53,7 +51,6 @@ public class Controller implements Serializable {
 
   // A map to tie Event objects with their threads
   public Map<Event, Thread> map = new HashMap<>();
-
 
   // list of threads
   public List<Thread> threadList = new ArrayList<>();
@@ -131,14 +128,15 @@ public class Controller implements Serializable {
           //now try join finished events...
           //check if there are any finished events, if so join their threads
           for (Event e : startedEvents) {
-              int x = 1;
-            if(e.isFinished()){
+            int x = 1;
+            if (e.isFinished()) {
               unstartedEvents.remove(e);
               // check map for Key e, add corresponded Thread to toJoin
               toJoin.add(map.get(e));
               //remove from threadList
               threadList.remove(map.get(e));
             }
+          }
 
             for (Thread t : toJoin) {
               try {
@@ -147,7 +145,7 @@ public class Controller implements Serializable {
                 interruptedException.printStackTrace();
               }
             }
-          }
+
           shutdown();
           state = States.Finished;
           break;
@@ -201,6 +199,7 @@ public class Controller implements Serializable {
 
   public void start(){
     unstartedEvents.sort(Comparator.comparing(Event::getDelayTime));
+    ReentrantLock lock = new ReentrantLock();
 
     //here we put the running of the events from the list
     for (Event e : unstartedEvents){
@@ -213,8 +212,9 @@ public class Controller implements Serializable {
       }
       startedEvents.add(e);
 
-
+      lock.lock();
       //unstartedEvents.remove(e); //do we need to remove event e? throws ConcurrentModificationException
+      lock.unlock();
     }
 
     //now try join finished events...
@@ -238,6 +238,9 @@ public class Controller implements Serializable {
       }
     }
 
+    public String printVariable(){
+    return gc.getVariables();
+    }
 
   public void loadEvents(String path){
 
@@ -274,9 +277,9 @@ public class Controller implements Serializable {
 
     }
     myReader.close();
-
     //load events, probably take filename as argument gotten from gui and then take code from restart event
   }
+
 
   public static void main(String[] args) {
 

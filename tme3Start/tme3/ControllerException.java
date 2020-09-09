@@ -52,7 +52,7 @@ public class ControllerException extends Throwable {
             }
         }
 
-        //TODO: Thread class can't implement serializeable ?
+        //TODO: Thread class can't implement serializeable? Must stop and kills threads
     public void serialize(GreenhouseControls gc) {
         // Serialize and save entire tme3.GreenhouseControls object into file dump.out
         System.out.println("Inside ControllerException.serialize");

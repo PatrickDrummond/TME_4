@@ -35,6 +35,8 @@ public class GreenhouseControls implements Serializable {
   private String eventsFile = "examples1.txt";
   private int errorcode;
 
+
+
   public GreenhouseControls() {
 
   }
@@ -54,7 +56,6 @@ public class GreenhouseControls implements Serializable {
   // Synchornized lock to prevent multiple events from accessing TwoTuple at the same time
 
   ReentrantLock lock = new ReentrantLock();
-
 
   public void setVariable(TwoTuple toSet) {
 
@@ -117,15 +118,15 @@ public class GreenhouseControls implements Serializable {
 
   }
 
-
   // Method to return the saved errorCode
   int getError() {
     return errorcode;
   }
 
-  // An example of an action() that inserts a
-  // new one of itself into the event list:
-
+  // Method for getting variable states
+  public String getVariables(){
+    return variables.toString();
+  }
 
   // Create inner classes PowerOn and FixWindow that implement Fixable
 
