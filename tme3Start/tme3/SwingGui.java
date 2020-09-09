@@ -88,7 +88,9 @@ public class SwingGui {
         buttonPanel.add(terminate);
         terminate.addActionListener(new Terminate());
         buttonPanel.add(suspend);
+        suspend.addActionListener(new Suspend());
         buttonPanel.add(resume);
+        resume.addActionListener(new Resume());
 
         //popup
         popup.add(startPop);
@@ -209,4 +211,23 @@ public class SwingGui {
             frame.dispose();
         }
     }
+
+    public class Suspend implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            for (Thread t : c.threadList){
+                t.suspend();
+            }
+        }
+    }
+
+    public class Resume implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            for (Thread t : c.threadList){
+                t.resume();
+            }
+        }
+    }
+
 }
