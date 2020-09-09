@@ -242,13 +242,13 @@ public class Controller implements Serializable {
     return gc.getVariables();
     }
 
-  public void loadEvents(String path){
+  public void loadEvents(File path){
 
     // get arugment from GUI
    // String eventsFile = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt"; // placeholder until GUI is made
 
     // Will eventually get File from GUI
-    File myFile = new File(path);
+    File myFile = path;
 
     // New scanner to read input file
     Scanner myReader = null;

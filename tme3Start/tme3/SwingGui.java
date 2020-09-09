@@ -126,22 +126,22 @@ public class SwingGui {
 
             //TODO: Dubug the file chooser lol
             //Create a file chooser
-//            JFileChooser fc = new JFileChooser();
-//            int result = fc.showOpenDialog(frame);
-//            File file = fc.getSelectedFile();
+            JFileChooser fc = new JFileChooser();
+            int result = fc.showOpenDialog(frame);
+            File file = fc.getSelectedFile();
             //String fileName =
 
             //In response to a button click:
             //int returnVal = fc.showOpenDialog(m33); // Dont know what this does
 
-            String fileName = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
-            c.loadEvents(fileName);
+            //String fileName = "/Users/patrickdrummond/Desktop/TME_4/tme3Start/examples1.txt";
+            c.loadEvents(file);
             fileLoaded = true;
             fileText.setText("File Loaded");
             //if it succeeds change the state of the gui
             //change the state of the controller
 
-            ta.append("\nEvents Loaded From: " + fileName);
+            //ta.append("\nEvents Loaded From: " + fileName);
         }
     }
 
